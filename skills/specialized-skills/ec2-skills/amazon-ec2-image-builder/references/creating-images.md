@@ -28,6 +28,8 @@ Valid `--parent-image` forms (the API's term for the base image): an Image Build
 
 Note: AL2023 ships with AWS CLI v2 preinstalled — don't add a CLI install component to an AL2023 image.
 
+For an **Ubuntu or Ubuntu Pro** base (for example `arn:aws:imagebuilder:${region}:aws:image/ubuntu-server-24-lts-x86/x.x.x`, or `ssm:/aws/service/canonical/ubuntu/pro-server/24.04/stable/current/amd64/hvm/ebs-gp3/ami-id` for Pro), take the parent image, block device mapping (Ubuntu's root device is `/dev/sda1`, not `/dev/xvda`), and apt component patterns from the `ubuntu-on-ec2` skill's building-ubuntu-images.md.
+
 ## 3. Create the build role
 
 The build role (the IAM role on the build instance's instance profile) needs exactly two managed policies for AMI builds. Don't confuse it with the build's optional `executionRole`, the role Image Builder itself assumes to run the build's workflows — see [custom-workflows.md](references/custom-workflows.md); the flows here don't need one.
@@ -99,6 +101,7 @@ aws imagebuilder create-image-recipe --name ${name}-recipe --semantic-version 1.
   --region ${region}
 ```
 
+- `deviceName` must match the parent image's root device (`aws ec2 describe-images --image-ids ${ami_id} --query "Images[0].RootDeviceName"`): `/dev/xvda` for Amazon Linux, `/dev/sda1` for Ubuntu. A mismatched name adds an extra empty volume instead of configuring the root volume.
 - The example encrypts the root volume with the account's default EBS key; add `"kmsKeyId":"${kms_key_arn}"` for a customer-managed key (required if the AMI will be shared cross-account — the default EBS key can't be). Block device mappings are also where root volume size and type are set. Distribution-side `kmsKeyId` only encrypts copies made to other Regions or accounts.
 - Recipes are immutable. To pick up changed components or settings, create a new recipe version — pass either an explicit next version (`1.0.1`) or a wildcard patch (`--semantic-version 1.0.x`), which the create call auto-assigns to the next free patch (wildcards auto-assign in create requests and resolve to the latest version in ARN references — see the Image Builder semantic versioning documentation). A pipeline that references the recipe with the `x.x.x` wildcard (`arn:...:image-recipe/${name}-recipe/x.x.x`) builds from the latest recipe version automatically; one pinned to a specific version needs repointing with `update-image-pipeline`.
 - `update-image-pipeline` is a **full replacement**: re-pass every field. Omitting `--status` resets a DISABLED pipeline to ENABLED; omitting `--schedule` makes the pipeline manual.

@@ -47,6 +47,7 @@ Ask this before creating anything — it changes what you build.
 | **launching-ec2-instance-with-best-practices** | Launching instances from an AMI the user already has |
 | **setting-up-ec2-instance-profiles** | Instance profiles in general (not the build IAM role this skill creates) |
 | **aws-compute** | AMI sharing, retiring, and lifecycle management; general EC2 fleet questions |
+| **ubuntu-on-ec2** | Ubuntu or Ubuntu Pro parent images, apt-based components, Pro/FIPS/USG hardening in builds, Ubuntu Marketplace parents - use it alongside this skill |
 
 **Not covered here:** AMI lifecycle/retirement (route via the table above) and VM/ISO image import and export (follow the AWS documentation directly).
 

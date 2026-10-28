@@ -81,6 +81,7 @@ Full tables and more errors in [troubleshooting.md](references/troubleshooting.m
 - **Launching a single hardened instance with best-practice defaults** → use the `launching-ec2-instance-with-best-practices` skill
 - **Creating IAM roles / instance profiles for EC2** → use the `setting-up-ec2-instance-profiles` skill
 - **Building AMIs with an Image Builder pipeline** → use the `amazon-ec2-image-builder` skill
+- **Ubuntu and Ubuntu Pro specifics** (Canonical AMI lookup, Pro AMIs and License Manager conversion, ESM/Livepatch/FIPS/USG, Ubuntu Marketplace listings) → use the `ubuntu-on-ec2` skill
 - **Lambda / serverless** → `aws-serverless`; **ECS/Fargate** → `aws-containers`; **EKS/Kubernetes** → `kubernetes`
 - **VPC, subnets, ALB/NLB, endpoints** → `aws-networking` or built-in knowledge
 - **IAM policy logic and CloudWatch dashboards/agent setup** → `aws-iam`, `aws-observability`
