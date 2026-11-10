@@ -81,7 +81,7 @@ Before asking anything, present what discovery already answered and what will be
 | Task complexity | Moderate | Sonnet-class model |
 
 Reply "looks good" to continue to the remaining questions, correct any line
-("model: gemini-2.5-pro"), or describe the issue in plain words.
+("model: gemini-3.5-flash"), or describe the issue in plain words.
 ```
 
 Questions resolved on this sheet are **not** re-asked in the batches below; record them with `chosen_by: "extracted"` (detected rows) or `"default"` (assumed rows, sheet-confirmed), and skip their entries in Batch 1/2. Rows the user corrects become `chosen_by: "user"`. Rows with no detection signal stay in the batches as normal questions.
@@ -147,8 +147,8 @@ Interpret → `design_constraints.compliance` array (same format as the full flo
 | Answer   | Model Impact                                        |
 | -------- | --------------------------------------------------- |
 | Quality  | Claude Sonnet 5 primary; Opus 5.5 for hardest tasks |
-| Speed    | Claude Haiku 4.5; also Nova Micro/Lite              |
-| Cost     | Claude Haiku 4.5 or Nova Micro                      |
+| Speed    | Claude Haiku 5.5; also Nova Micro/Lite              |
+| Cost     | Claude Haiku 5.5 or Nova Micro                      |
 | Special  | Deferred to Q10                                     |
 | Balanced | Claude Sonnet 5                                     |
 
@@ -185,13 +185,14 @@ _Skip when:_ `models[].model_id` is populated in `ai-workload-profile.json` **wi
 
 | Source        | Baseline Recommendation        | Pricing Context                    |
 | ------------- | ------------------------------ | ---------------------------------- |
-| Gemini Flash  | Claude Haiku 4.5 ($1/$5)       | Strong savings                     |
+| Gemini Flash | Claude Haiku 5.5 (US Geo: $0.11/$0.55 up to 100K prompt tokens; $0.55/$2.75 above 100K) | Compare the exact Flash model and target token counts; savings are tier-dependent |
 | Gemini Pro    | Claude Sonnet 5 ($2/$10)       | Comparable tier                    |
 | GPT-6/6.1 (Astra/Sol/Luna) | **Same model on Bedrock** | ~10% over OpenAI std (DR tier); Astra/6.1 Sol also support Ultrafast |
+| GPT-6.1 Terra              | **Same model on Bedrock** | Use the model-specific endpoint and context-tier prices in `references/shared/openai-on-bedrock.md`; compare against measured source spend or verified source rates. |
 | GPT-5.6 (any) | **Same model on Bedrock**      | ~10% over OpenAI std (DR tier)     |
 | GPT-5.5       | **Same model on Bedrock**      | ~10% over OpenAI std (DR tier)     |
 | GPT-5.4       | **Same model on Bedrock**      | ~10% over OpenAI std (DR tier)     |
-| GPT-3.5 Turbo | GPT-5.6 Luna; or Haiku 4.5     | Luna 36% cheaper, 77% under Haiku  |
+| GPT-3.5 Turbo | GPT-5.6 Luna; or Claude Haiku 5.5 | At equal billed volumes and 2:1 input/output, Haiku US Geo is 56.25% cheaper up to 100K prompt tokens; Luna is 54.29% cheaper above 100K while Luna remains within 272K. Recount target tokens; if request size is unknown, present both Haiku tiers. |
 | GPT-4/4 Turbo | GPT-5.6 Terra; or Sonnet 5     | Not on Bedrock — offer both        |
 | GPT-4o        | GPT-5.6 Terra; or Sonnet 5     | Not on Bedrock — offer both        |
 | GPT-5.4 Mini  | GPT-5.6 Luna; or Nova Lite     | Mini not on Bedrock — offer both   |
@@ -212,6 +213,8 @@ For sources without a Bedrock equivalent, present a same-vendor upgrade and a cr
 Override examples: GPT-4 + Q2=cost → Haiku; Flash + Q10=extended thinking → Sonnet; GPT-4o + Q10=speech → Nova 2 Sonic; GPT-5.5 + Q2=cost → Sonnet 5.
 
 Interpret → `ai_model_baseline`. Default: auto-detect, fallback Q2 priority-based.
+
+When the resolved baseline is a Gemini 2.5 model (`gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.5-flash-lite`), also ask full-flow **Q19b** from `clarify-ai.md` (serving API: Vertex AI vs Gemini Developer API) with the same auto-detect rule, and write `ai_constraints.ai_source_serving_api`. The 2.5 models are retired on Vertex AI but still billed on the Developer API, so the answer decides the source-price baseline.
 
 ### Batch 1 → Save Draft and Present Batch 2
 
@@ -289,7 +292,7 @@ Present with concrete anchors: Critical = autocomplete/live chat; Important = ch
 
 | Answer    | Impact                                                       |
 | --------- | ------------------------------------------------------------ |
-| Critical  | Haiku/Nova Micro; streaming required; provisioned throughput |
+| Critical  | Haiku/Nova Micro candidates; stream, verify model-specific quotas/capacity, and measure latency at the chosen effort level |
 | Important | Sonnet 5 with streaming; standard on-demand                  |
 | Flexible  | Any model; batch inference for cost savings                  |
 
